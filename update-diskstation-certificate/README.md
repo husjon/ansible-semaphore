@@ -1,4 +1,4 @@
-# Update DistStation Certificate
+# Update DiskStation Certificate
 
 This playbook allows for the DiskStation WebStation SSL certificate to be updated using Ansible Semaphore.
 It does not have direct access to the certificate on the NAS, however it uploads the certificate bundle to the `semaphore` users home directory.
