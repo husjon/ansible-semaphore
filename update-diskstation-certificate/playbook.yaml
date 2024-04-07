@@ -73,10 +73,6 @@
         dest: "{{ playbook_dir }}/ssh/id_rsa"
         mode: "0600"
 
-    - name: Output public key
-      ansible.builtin.debug:
-        msg: "{{ ssh_public }}"
-
     - name: Create directory for certs directory
       ansible.builtin.file:
         path: "{{ certs_directory }}"
