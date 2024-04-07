@@ -6,6 +6,28 @@ The `root` user on the NAS then runs a scheduled task to check if the certificat
 
 ## DiskStation Setup
 
+### Add `semaphore` user to DiskStation
+
+Create a user named `semaphore`, limit the users access as you see fit / feel comfortable with.
+
+#### Give `semaphore` user shell access
+
+SSH onto the NAS with the admin / root user and edit the `semaphore` user in `/etc/passwd`
+
+Change from  
+`semaphore:x:1234:100::/var/services/homes/semaphore:/sbin/nologin`  
+to:  
+`semaphore:x:1234:100::/var/services/homes/semaphore:/bin/ash`
+
+#### Add the SSH key public to the `semaphore` `authorized_keys`.
+
+```bash
+mkdir /var/services/homes/semaphore/.ssh
+chown semaphore /var/services/homes/semaphore/.ssh
+
+echo "YOUR PUBLIC KEY HERE" > /var/services/homes/semaphore/.ssh/authorized_keys
+```
+
 ### Set up initial reference Certificate
 
 In the **Control Panel** under **Security** > **Certificate** we first need to add our own certificate and set it as system default.  
