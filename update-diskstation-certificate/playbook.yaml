@@ -58,6 +58,7 @@
         - { src: .crt, dst: cert.pem }
         - { src: .key, dst: privkey.pem }
       delegate_to: "{{ cf_site_dns }}"
+      listen: renew certificate
 
   tasks:
     - name: Create directory
