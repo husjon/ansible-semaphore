@@ -66,14 +66,15 @@
         state: directory
         mode: "0700"
 
-    - name: Generate SSH key
-      community.crypto.openssh_keypair:
-        path: "{{ playbook_dir }}/ssh/id_rsa"
-      register: ssh_keys
+    - name: Add private SSH key
+      ansible.builtin.copy:
+        content: "{{ ssh_private }}"
+        dest: "{{ playbook_dir }}/ssh/id_rsa"
+        mode: "0600"
 
     - name: Output public key
       ansible.builtin.debug:
-        msg: "{{ ssh_keys.public_key }}"
+        msg: "{{ ssh_public }}"
 
     - name: Create directory for certs directory
       ansible.builtin.file:
