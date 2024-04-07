@@ -1,0 +1,134 @@
+---
+# based on: https://github.com/gregsowell/ansible-f5
+
+- name: Create LE cert
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    ansible_user: semaphore
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+    ansible_ssh_private_key_file: "./ssh/id_rsa"
+
+    # where to store the keys and certificates
+    certs_directory: "{{ playbook_dir }}/certs"
+
+    # private_key_csr is the key associated with the certificate for this site
+    private_key_csr: "{{ certs_directory }}/{{ cf_site_dns }}.key"
+
+    # the email used towards Let's Encrypt
+    le_email: "{{ vault_le_email }}"
+    le_private_key: "{{ certs_directory }}/le-account.key"
+
+    acme_directory: https://acme-v02.api.letsencrypt.org/directory
+    # acme_directory: https://acme-staging-v02.api.letsencrypt.org/directory
+
+    # DNS name you will be creating the certificate for
+    cf_site_dns: "{{ vault_cf_site_dns }}"
+    cf_dns_zone: "{{ vault_cf_dns_zone }}"
+
+    cf_api_token: "{{ vault_cf_api_token }}"
+
+  handlers:
+    - name: Let the challenge be validated and retrieve the cert and intermediate certificate - retry multiple times because the DNS can be a little slow
+      community.crypto.acme_certificate:
+        account_key_src: "{{ le_private_key }}"
+        account_email: "{{ le_email }}"
+        src: "{{ certs_directory }}/{{ cf_site_dns }}.csr"
+        cert: "{{ certs_directory }}/{{ cf_site_dns }}.crt"
+        fullchain: "{{ certs_directory }}/{{ cf_site_dns }}-fullchain.crt"
+        chain: "{{ certs_directory }}/{{ cf_site_dns }}-intermediate.crt"
+        challenge: dns-01
+        remaining_days: 60
+        data: "{{ com_challenge }}"
+        acme_directory: "{{ acme_directory }}"
+        acme_version: 2
+      retries: 10
+      delay: 12
+      listen: renew certificate
+
+    - name: Copy files to NAS
+      ansible.builtin.copy:
+        src: "{{ certs_directory }}/{{ cf_site_dns }}{{ item.src }}"
+        dest: "~/{{ item.dst }}"
+        mode: "0600"
+        remote_src: false
+      with_items:
+        - { src: -fullchain.crt, dst: fullchain.pem }
+        - { src: .crt, dst: cert.pem }
+        - { src: .key, dst: privkey.pem }
+      delegate_to: "{{ cf_site_dns }}"
+
+  tasks:
+    - name: Create directory
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/ssh"
+        state: directory
+        mode: "0700"
+
+    - name: Generate SSH key
+      community.crypto.openssh_keypair:
+        path: "{{ playbook_dir }}/ssh/id_rsa"
+      register: ssh_keys
+
+    - name: Output public key
+      ansible.builtin.debug:
+        msg: "{{ ssh_keys.public_key }}"
+
+    - name: Create directory for certs directory
+      ansible.builtin.file:
+        path: "{{ certs_directory }}"
+        state: directory
+        mode: "0755"
+
+    - name: Generate Letsencrypt private key
+      community.crypto.openssl_privatekey:
+        path: "{{ le_private_key }}"
+        state: present
+      delegate_to: localhost
+
+    - name: Generate CSR private key
+      community.crypto.openssl_privatekey:
+        path: "{{ private_key_csr }}"
+        state: present
+      delegate_to: localhost
+
+    - name: Make sure account exists and has given contacts. We agree to TOS.
+      community.crypto.acme_account:
+        account_key_src: "{{ le_private_key }}"
+        state: present
+        terms_agreed: true
+        acme_version: 2
+        acme_directory: "{{ acme_directory }}"
+        contact:
+          - "mailto:{{ le_email }}"
+      delegate_to: localhost
+
+    - name: Generate an OpenSSL Certificate Signing Request
+      community.crypto.openssl_csr:
+        path: "{{ certs_directory }}/{{ cf_site_dns }}.csr"
+        privatekey_path: "{{ private_key_csr }}"
+        common_name: "{{ cf_site_dns }}"
+
+    - name: Create a challenge using an account key file.
+      community.crypto.acme_certificate:
+        account_key_src: "{{ le_private_key }}"
+        account_email: "{{ le_email }}"
+        src: "{{ certs_directory }}/{{ cf_site_dns }}.csr"
+        cert: "{{ certs_directory }}/{{ cf_site_dns }}.crt"
+        challenge: dns-01
+        acme_directory: "{{ acme_directory }}"
+        # Renew if the certificate is at least 30 days old
+        remaining_days: 60
+        acme_version: 2
+      register: com_challenge
+
+    - name: Create an TXT record on cloudflare when the record file exists
+      when: com_challenge.challenge_data[site_dns]['dns-01'].record is defined
+      community.general.cloudflare_dns:
+        zone: "{{ cf_dns_zone }}"
+        record: "{{ com_challenge.challenge_data[site_dns]['dns-01'].record }}"
+        value: "{{ com_challenge.challenge_data[site_dns]['dns-01'].resource_value }}"
+        type: TXT
+        api_token: "{{ cf_api_token }}"
+      notify: renew certificate
