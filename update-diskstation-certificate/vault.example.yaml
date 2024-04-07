@@ -1,0 +1,13 @@
+vault_le_email: "noreply@example.com"
+
+vault_cf_site_dns: "my-host.example.com"
+vault_cf_dns_zone: "example.com"
+vault_cf_api_token: "MY_CLOUDFLARE_TOKEN"
+
+ssh_private: |
+  -----BEGIN OPENSSH PRIVATE KEY-----
+  PRIVATE KEY GOES HERE
+  -----END OPENSSH PRIVATE KEY-----
+
+ssh_public: |
+  ssh-rsa PUBLIC KEY
