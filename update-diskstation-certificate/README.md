@@ -68,10 +68,10 @@ The DiskStation is now ready for Ansible Semaphore to update the certificates.
 ### Key Store
 
 Add a Key Store for decrypting the vault.  
- Name: `GitHub Vault` (or whatever makes sense to you)  
- Type: `Login with password`  
- Login: `<LEAVE BLANK>`  
- Password: `<YOUR VAULT PASSWORD>`
+Name: `GitHub Vault` (or whatever makes sense to you)  
+Type: `Login with password`  
+Login: `<LEAVE BLANK>`  
+Password: `<YOUR VAULT PASSWORD>`
 
 ### Environment
 
@@ -107,7 +107,7 @@ Playbook Filename: `update-diskstation-certificate/playbook.yaml`
 Inventory: `NAS`  
 Repository: `GitHub`  
 Environment: `None`  
-Vault Password: `GitHub Vault`
+Vault Password: `GitHub Vault`  
 Cron: `0 */4 * * *` run the playbook every 4 hours every  
 CLI Args:
 
