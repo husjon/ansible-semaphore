@@ -132,7 +132,7 @@ Inventory: `NAS`
 Repository: `GitHub`  
 Environment: `None`  
 Vault Password: `GitHub Vault`  
-Cron: `0 */4 * * *` run the playbook every 4 hours every  
+Cron: `0 0 * * 0` run the playbook every Sunday  
 CLI Args:
 
 ```json
