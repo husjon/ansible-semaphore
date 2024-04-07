@@ -124,11 +124,11 @@
       register: com_challenge
 
     - name: Create an TXT record on cloudflare when the record file exists
-      when: com_challenge.challenge_data[site_dns]['dns-01'].record is defined
+      when: com_challenge.challenge_data[cf_site_dns]['dns-01'].record is defined
       community.general.cloudflare_dns:
         zone: "{{ cf_dns_zone }}"
-        record: "{{ com_challenge.challenge_data[site_dns]['dns-01'].record }}"
-        value: "{{ com_challenge.challenge_data[site_dns]['dns-01'].resource_value }}"
+        record: "{{ com_challenge.challenge_data[cf_site_dns]['dns-01'].record }}"
+        value: "{{ com_challenge.challenge_data[cf_site_dns]['dns-01'].resource_value }}"
         type: TXT
         api_token: "{{ cf_api_token }}"
       notify: renew certificate
