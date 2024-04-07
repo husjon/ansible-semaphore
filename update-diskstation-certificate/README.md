@@ -6,6 +6,8 @@ The `root` user on the NAS then runs a scheduled task to check if the certificat
 
 ## DiskStation Setup
 
+### Set up initial reference Certificate
+
 In the **Control Panel** under **Security** > **Certificate** we first need to add our own certificate and set it as system default.  
 The initial certificate can be any certificate (self-signed or generated with certbot or similar).
 
