@@ -19,7 +19,7 @@ Make a note of the ID as we need it for the Scheduled task later.
 ```json
 {
   "YOUR_CERTIFICATE_ID_HERE": {
-    // <- This is the ID we want
+    // ^ This is the ID we want
     "desc": "",
     "services": [
       {
