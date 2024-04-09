@@ -100,14 +100,14 @@ Password: `<YOUR VAULT PASSWORD>`
 ### Environment
 
 Add an environment (leave defaults)  
-Name: `None`  
+Name: `Empty`  
 Extra variables: `{}`  
 Environment variables: `<EMPTY>`
 
 ### Inventory
 
 Add an inventory file  
-Name: `NAS`
+Name: `NAS`  
 User Credentials: `None`  
 Type: `Static`
 
