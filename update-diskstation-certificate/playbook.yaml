@@ -40,7 +40,7 @@
         chain: "{{ certs_directory }}/{{ cf_site_dns }}-intermediate.crt"
         challenge: dns-01
         remaining_days: 60
-        data: "{{ com_challenge }}"
+        data: "{{ acme_challenge }}"
         acme_directory: "{{ acme_directory }}"
         acme_version: 2
       retries: 10
@@ -119,14 +119,14 @@
         # Renew if the certificate is at least 30 days old
         remaining_days: 60
         acme_version: 2
-      register: com_challenge
+      register: acme_challenge
 
     - name: Create an TXT record on cloudflare when the record file exists
-      when: com_challenge.challenge_data[cf_site_dns]['dns-01'].record is defined
+      when: acme_challenge.challenge_data[cf_site_dns]['dns-01'].record is defined
       community.general.cloudflare_dns:
         zone: "{{ cf_dns_zone }}"
-        record: "{{ com_challenge.challenge_data[cf_site_dns]['dns-01'].record }}"
-        value: "{{ com_challenge.challenge_data[cf_site_dns]['dns-01'].resource_value }}"
+        record: "{{ acme_challenge.challenge_data[cf_site_dns]['dns-01'].record }}"
+        value: "{{ acme_challenge.challenge_data[cf_site_dns]['dns-01'].resource_value }}"
         type: TXT
         api_token: "{{ cf_api_token }}"
       notify: renew certificate
