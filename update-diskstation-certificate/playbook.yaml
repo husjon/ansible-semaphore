@@ -30,6 +30,12 @@
     cf_api_token: "{{ vault_cf_api_token }}"
 
   handlers:
+    - name: Wait 60 seconds for DNS changes to propagate
+      ansible.builtin.wait_for:
+        timeout: 60
+      delegate_to: localhost
+      listen: renew certificate
+
     - name: Let the challenge be validated and retrieve the cert and intermediate certificate - retry multiple times because the DNS can be a little slow
       community.crypto.acme_certificate:
         account_key_src: "{{ le_private_key }}"
@@ -43,8 +49,6 @@
         data: "{{ acme_challenge }}"
         acme_directory: "{{ acme_directory }}"
         acme_version: 2
-      retries: 10
-      delay: 12
       listen: renew certificate
 
     - name: Copy files to NAS
