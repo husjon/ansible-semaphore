@@ -133,3 +133,13 @@ CLI Args:
 ```json
 ["-e", "@update-diskstation-certificate/vault.yaml"]
 ```
+
+### Schedule
+
+Name: `Update every Sunday`  
+Template: `Update DiskStation certificate`  
+Show cron format: `true`  
+Cron: `0 0 * * 0` run the playbook every Sunday  
+Enabled: `true`
+
+Note: Show cron format can be disabled after pasting in the values so that the settings are more readable.
