@@ -123,9 +123,11 @@ Name: `Update DiskStation certificate`
 Playbook Filename: `update-diskstation-certificate/playbook.yaml`  
 Inventory: `NAS`  
 Repository: `GitHub`  
-Environment: `None`  
-Vault Password: `GitHub Vault`  
-Cron: `0 0 * * 0` run the playbook every Sunday  
+Variable Group: `None`  
+Vaults:
+ * Vault ID: `<Optionally leave blank>`
+ * Type: `Password`
+ * Vault Password: `GitHub Vault`
 CLI Args:
 
 ```json
