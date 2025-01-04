@@ -89,6 +89,14 @@ The DiskStation is now ready for Ansible Semaphore to update the certificates.
 
 ## Ansible Semaphore Setup
 
+### Repository
+
+Add the GitHub repository  
+Name: `GitHub` (or whatever makes sense to you)  
+URL: `https://github.com/husjon/ansible-semaphore.git`  
+Branch: `main`  
+Access Key: `None`
+
 ### Key Store
 
 Add a Key Store for decrypting the vault.  
@@ -108,14 +116,6 @@ Type: `Static`
 [nas]
 my-nas.example.com
 ```
-
-### Repository
-
-Add the GitHub repository  
-Name: `GitHub` (or whatever makes sense to you)  
-URL: `https://github.com/husjon/ansible-semaphore.git`  
-Branch: `main`  
-Access Key: `None`
 
 ### Task Templates
 
