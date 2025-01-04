@@ -97,13 +97,6 @@ Type: `Login with password`
 Login: `<LEAVE BLANK>`  
 Password: `<YOUR VAULT PASSWORD>`
 
-### Environment
-
-Add an environment (leave defaults)  
-Name: `Empty`  
-Extra variables: `{}`  
-Environment variables: `<EMPTY>`
-
 ### Inventory
 
 Add an inventory file  
